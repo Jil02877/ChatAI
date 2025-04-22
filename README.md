@@ -11,3 +11,7 @@ Currently, two official plugins are available:
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 # ChatAI
+I created Simple Chat bot using Gemini API.
+This will give you a answer your question accroding to your prompt or question.
+The model of Gemini i use in this project is gemini-1.5-flash.
+Deploy Link: https://chat-ai-hazel-one.vercel.app/
