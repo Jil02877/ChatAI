@@ -4,21 +4,36 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const ChatBox = () => {
   const [prompt, setPrompt] = useState('');
   const [answerText, setAnswerText] = useState('');
+  const [loading, setLoading] = useState(false); // <- loading state
 
   const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await model.generateContent([prompt]);
-    const text = await result.response.text();
-    setAnswerText(text);
+    if (!prompt.trim()) return;
+
+    setLoading(true);  // disable button
+    setAnswerText(''); // clear old answer
+
+    try {
+      const result = await model.generateContent([prompt]);
+      const text = await result.response.text();
+      setAnswerText(text);
+    } catch (error) {
+      setAnswerText('Something went wrong. Please try again.');
+      console.error(error);
+    } finally {
+      setLoading(false); // re-enable button
+    }
   };
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <label htmlFor="prompt" className="block text-gray-700 font-semibold">Ask a Question:</label>
+        <label htmlFor="prompt" className="block text-gray-700 font-semibold">
+          Ask a Question:
+        </label>
         <input
           type="text"
           name="prompt"
@@ -26,12 +41,16 @@ const ChatBox = () => {
           onChange={(e) => setPrompt(e.target.value)}
           className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
           placeholder="Type your question..."
+          disabled={loading}
         />
         <button
           type="submit"
-          className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-md transition"
+          className={`px-6 py-2 rounded-md transition text-white ${
+            loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-500 hover:bg-indigo-600'
+          }`}
+          disabled={loading}
         >
-          Get Answer
+          {loading ? 'Loading...' : 'Get Answer'}
         </button>
       </form>
 
